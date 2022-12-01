@@ -1,0 +1,14 @@
+bin/**
+!bin/**/
+build/**
+!build/**/
+!.gitkeep
+#!bin/.gitkeep
+#!build/.gitkeep
+#!build/disk/.gitkeep
+#!build/fs/.gitkeep
+#!build/idt/.gitkeep
+#!build/io/.gitkeep
+#!build/memory/.gitkeep
+#!build/memory/heap/.gitkeep
+#!build/memory/paging/.gitkeep

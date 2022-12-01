@@ -1,0 +1,5 @@
+ASCII characters starting at 0xB8000
+Monochrome displays start at 0xB0000
+
+Byte 0 - Character
+Byte 1 - Color
