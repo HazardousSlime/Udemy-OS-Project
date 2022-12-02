@@ -24,7 +24,7 @@ int path_parse(const char* path, struct path_root* proot){
         return -EMEMORY;
     int drive_no = path_get_drive_number(path);
     if(drive_no < 0)
-        return -EINVARG;
+        return -EBADPATH;
     proot->drive_no = drive_no;
     //proot->first = NULL;
     struct path_part* prev_part = NULL;
@@ -35,7 +35,7 @@ int path_parse(const char* path, struct path_root* proot){
             if(start == i){
                 if(path[i] == '\0')
                     return PEACHOS_ALL_OK;
-                return -EINVARG;
+                return -EBADPATH;
             }
             //Allocate memory for part
             cur_part = kzalloc(sizeof(struct path_part));
@@ -58,7 +58,7 @@ int path_parse(const char* path, struct path_root* proot){
             if(path[i] == '\0')
                 break;
         }else if(!path_valid_char(path[i])){
-            return -EINVARG;
+            return -EBADPATH;
         }
     }
     return PEACHOS_ALL_OK;

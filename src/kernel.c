@@ -13,12 +13,15 @@
 #define BLACK 0
 #define WHITE 15
 
+#define assert(c) assert_func((c), (__FILE__), (__LINE__), (__func__) )
+
 extern void problem();
 
 static uint16_t* video_mem = 0;
 static int term_pos = 0;
 
 static struct paging_4gb_chunk* kernel_chunk;
+
 
 uint16_t terminal_make_char(char c, char colour){
 	return (colour << 8) | c;
@@ -52,6 +55,18 @@ void puts(const char* str){
 	print("\n");
 }
 
+void assert_func(bool cond, const char *file, int line, const char* func){
+	if(cond)
+		return;
+	print(file);
+	char line_str[12];
+	print(":"); print(itoa(line, line_str));
+	print(": "); print(func);
+	puts(": Assertion failed.");
+	print("====END====");
+	while(1);
+}
+
 void terminal_initialize(){
 	video_mem = (uint16_t*)(0xB8000);
 	for(int y = 0; y < VGA_HEIGHT; ++y){
@@ -75,12 +90,14 @@ void kernel_main(){
 
 	enable_paging();
 
-	const char* w2 = "calories";
-	char buf[12];
-	puts(itoa(memcmp(w2, "cat", 8), buf));
-	puts(itoa(memcmp("bears", "beanies", 5), buf));
-	puts(itoa(memcmp("", "", 0), buf));
-	//puts(itoa(0, buf));
+	struct path_root* roots[10];
+	bzero(roots, sizeof(struct path_root*) * 10);
+
+	assert( (path_parse("1:/", roots[0]) == PEACHOS_ALL_OK)); 
+	assert( (path_parse("17:/", roots[1]) == -EBADPATH)); 
+	assert( (path_parse("7:/test/path.txt/", roots[2]) == PEACHOS_ALL_OK)); 
+	assert( (path_parse("5:/this/is/another/path", roots[3]) == PEACHOS_ALL_OK)); 
+	assert( (path_parse("5:/this//is/another/path", roots[4]) == -EBADPATH)); 
 
 	enable_interrupts();
 	print("OK");
