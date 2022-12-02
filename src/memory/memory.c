@@ -1,4 +1,5 @@
 #include "memory.h"
+#include "heap/kheap.h"
 
 /*const int BLOCK_SIZE = 4096;
 const int NUMBER_OF_BLOCKS = 1024 * 1024 / BLOCK_SIZE;
@@ -18,6 +19,31 @@ unsigned char* heap_entry_table = NULL;*/
 
 void bzero(void *ptr, size_t sz){
     memset(ptr,0,sz);
+}
+
+int char_to_digit(char c){
+    return (int)(c - 48);
+}
+
+char* itoa(int num){
+    size_t max_len = 12;        //The maximum length in digits of a signed integer + null terminator is 12
+    int stack[max_len];
+    //Set this to zero in case num == 0
+    stack[max_len - 1] = 0; 
+    int top = max_len - 1;
+    char *buf = kzalloc(max_len);
+    int b_index = 0;
+    buf[0] = '0';
+    for(int n = num; n != 0; n = n / 10, --top){
+        stack[top] = (num >= 0) ? n % 10 : -1 * (n % 10);
+    }
+    ++top;
+    if(num < 0)
+        buf[b_index++] = '-';
+    for(;top < max_len;++b_index,++top){
+        buf[b_index] = stack[top] + 48;
+    }
+    return buf;
 }
 
 /*void free(void *ptr){

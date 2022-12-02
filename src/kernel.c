@@ -6,6 +6,7 @@
 #include "disk/disk.h"
 #include "fs/pparser.h"
 #include "status.h"
+#include "memory/memory.h"
 
 #define BLUE 1
 #define BLACK 0
@@ -69,7 +70,7 @@ void kernel_main(){
 	enable_paging();
 
 
-	struct path_root* test = NULL;
+	/*struct path_root* test = NULL;
 	int res = path_parse("0:/test/file.txt", test);
 	switch(res){
 		case -EINVARG:
@@ -81,7 +82,15 @@ void kernel_main(){
 		default:
 			print("Successful parse");
 			break;
-	}
+	}*/
+
+	char* str = itoa(-2147483648);
+	print(str);
+	char *str2 = itoa(2147483647);
+	print (str2);
+	char *str3 = itoa(0);
+	print(str3);
+
 	enable_interrupts();
 	print("OK");
 }
