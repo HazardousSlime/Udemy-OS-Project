@@ -1,5 +1,6 @@
 #include "memory.h"
 #include "heap/kheap.h"
+#include <stdbool.h>
 
 /*const int BLOCK_SIZE = 4096;
 const int NUMBER_OF_BLOCKS = 1024 * 1024 / BLOCK_SIZE;
@@ -23,6 +24,10 @@ void bzero(void *ptr, size_t sz){
 
 int char_to_digit(char c){
     return (int)(c - 48);
+}
+
+bool is_digit(char c){
+    return c >= 48 && c <= 57;
 }
 
 char* itoa(int num, char* buf){
@@ -106,5 +111,11 @@ void strncpy(void* dest, const void* src, size_t sz){
 int strlen(const char *str){
     int i = 0;
     while(str[i++]);
+    return i;
+}
+
+int strnlen(const char *str, int max){
+    int i = 0;
+    while(i < max && str[i++]);
     return i;
 }
