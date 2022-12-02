@@ -8,12 +8,12 @@
 #include "status.h"
 #include "memory/memory.h"
 #include "limits.h"
+#include "test/test.h"
 
 #define BLUE 1
 #define BLACK 0
 #define WHITE 15
 
-#define assert(c) assert_func((c), (__FILE__), (__LINE__), (__func__) )
 
 extern void problem();
 
@@ -55,17 +55,7 @@ void puts(const char* str){
 	print("\n");
 }
 
-void assert_func(bool cond, const char *file, int line, const char* func){
-	if(cond)
-		return;
-	print(file);
-	char line_str[12];
-	print(":"); print(itoa(line, line_str));
-	print(": "); print(func);
-	puts(": Assertion failed.");
-	print("====END====");
-	while(1);
-}
+
 
 void terminal_initialize(){
 	video_mem = (uint16_t*)(0xB8000);

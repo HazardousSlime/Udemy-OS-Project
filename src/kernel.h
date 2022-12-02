@@ -8,6 +8,7 @@
 
 void kernel_main();
 void print(const char* str);
+void puts(const char* str);
 //void problem_escape();
 
 #endif //KERNEL_H

@@ -1,6 +1,9 @@
+UNIT_TESTS = $(patsubst ./src/unittests/%.c, ./build/unittests/%.o, $(wildcard ./src/unittests/*.c))
+
 FILES = ./build/kernel.asm.o ./build/kernel.o ./build/idt/idt.asm.o ./build/idt/idt.o ./build/memory/memory.o \
 ./build/io/io.asm.o ./build/memory/heap/heap.o ./build/memory/heap/kheap.o ./build/memory/paging/paging.o \
-./build/memory/paging/paging.asm.o ./build/disk/disk.o ./build/fs/pparser.o
+./build/memory/paging/paging.asm.o ./build/disk/disk.o ./build/fs/pparser.o ./build/test/test.o $(UNIT_TESTS)
+
 
 INCLUDES= -I ./src
 CC = ~/opt/cross/bin/i686-elf-gcc 
@@ -57,6 +60,12 @@ all: ./bin/boot.bin ./bin/kernel.bin
 
 ./build/fs/pparser.o: ./src/fs/pparser.c
 	$(CC) $(INCLUDES) $(FLAGS) -std=gnu99 -c ./src/fs/pparser.c -o ./build/fs/pparser.o
+
+./build/test/test.o: ./src/test/test.c
+	$(CC) $(INCLUDES) $(FLAGS) -std=gnu99 -c ./src/test/test.c -o ./build/test/test.o
+
+./build/unittests/%.o: ./src/unittests/%.c
+	$(CC) $(INCLUDES) $(FLAGS) -std=gnu99 -c $< -o  $@
 
 install: ./bin/os.bin
 	sudo dd if=./bin/os.bin of=/dev/sdb
