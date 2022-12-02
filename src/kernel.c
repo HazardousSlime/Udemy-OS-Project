@@ -69,27 +69,8 @@ void kernel_main(){
 
 	enable_paging();
 
-
-	/*struct path_root* test = NULL;
-	int res = path_parse("0:/test/file.txt", test);
-	switch(res){
-		case -EINVARG:
-			print("invalid argument");
-			break;
-		case -EMEMORY:
-			print("out of memory");
-			break;
-		default:
-			print("Successful parse");
-			break;
-	}*/
-
-	char* str = itoa(-2147483648);
-	print(str);
-	char *str2 = itoa(2147483647);
-	print (str2);
-	char *str3 = itoa(0);
-	print(str3);
+	const char* text = "Example text";
+	print(itoa(strlen(text)));
 
 	enable_interrupts();
 	print("OK");
