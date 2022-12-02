@@ -76,3 +76,8 @@ void strncpy(void* dest, const void* src, size_t sz){
     }
 }
 
+int strlen(const char *str){
+    int i = 0;
+    while(str[i++]);
+    return i;
+}
