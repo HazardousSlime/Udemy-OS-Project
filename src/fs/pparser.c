@@ -7,10 +7,10 @@
 #include "kernel.h"
 
 int path_get_drive_number(const char* path){
-    if(     path[0] == '0' &&
+    if(     is_digit(path[0]) &&
             path[1] == ':' &&
             path[2] == '/')
-        return 0;
+        return char_to_digit(path[0]);
     return -1;
 }
 

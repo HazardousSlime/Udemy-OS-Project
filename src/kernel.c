@@ -75,19 +75,12 @@ void kernel_main(){
 
 	enable_paging();
 
-	//int a = INT_MAX;
-	char buf[13];
-	char buf2[3];
-	char buf3[4];
-
-	puts(itoa(INT_MAX, buf)); 
-	puts(itoa(INT_MIN, buf)); 
-	puts(itoa(27, buf2)); 
-	puts(itoa(-27, buf3)); 
-
-
-	//const char* text = "Example text";
-	//print(itoa(strlen(text)));
+	const char* w2 = "calories";
+	char buf[12];
+	puts(itoa(memcmp(w2, "cat", 8), buf));
+	puts(itoa(memcmp("bears", "beanies", 5), buf));
+	puts(itoa(memcmp("", "", 0), buf));
+	//puts(itoa(0, buf));
 
 	enable_interrupts();
 	print("OK");

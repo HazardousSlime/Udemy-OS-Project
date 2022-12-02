@@ -33,12 +33,14 @@ bool is_digit(char c){
 char* itoa(int num, char* buf){
     size_t max_len = 12;        //The maximum length in digits of a signed integer + null terminator is 12
     int stack[max_len];
-    //Set this to zero in case num == 0
-    stack[max_len - 1] = 0; 
-    int top = max_len - 1;
-    //char *buf = kzalloc(max_len);
-    int b_index = 0;
     buf[0] = '0';
+    int b_index = 0;
+    if(num == 0){
+        ++b_index;
+        goto out;
+    }
+
+    int top = max_len - 1;
     for(int n = num; n != 0; n = n / 10, --top){
         stack[top] = (num >= 0) ? n % 10 : -1 * (n % 10);
     }
@@ -48,6 +50,7 @@ char* itoa(int num, char* buf){
     for(;top < max_len;++b_index,++top){
         buf[b_index] = stack[top] + 48;
     }
+out:
     buf[b_index] = '\0';
     return buf;
 }
@@ -91,6 +94,14 @@ void* malloc(size_t sz){
         heap_entry_table[j] |= HAS_N;
     return HEAP_START_ADDRESS + start_block * BLOCK_SIZE;
 }*/
+
+int memcmp(const void* str1, const void* str2, size_t n){
+    const char* c_str1 = (char*)str1;
+    const char* c_str2 = (char*)str2;
+    int i = 0;
+    for(;i < n && c_str1[i] == c_str2[i];++i);
+    return c_str1[i] - c_str2[i];
+}
 
 void memset(void* ptr, int c, size_t sz){
     char* c_ptr = (char *)ptr;
