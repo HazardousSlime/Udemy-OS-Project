@@ -11,6 +11,6 @@ struct path_part{
     struct path_part* next;
 };
 
-int path_parse(const char* path, struct path_root* proot);
+int path_parse(const char* path, const char* current_directory_path, struct path_root* proot);
 
 #endif //PPARSER_H

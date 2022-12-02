@@ -8,12 +8,13 @@
 
 void path_free(struct path_root* pr){
     struct path_part* pp = pr->first;
-    kfree(pr);
-    for(; pp; pp=pp->next){
+    while(pp){
         struct path_part* np = pp->next;
         kfree(pp->part);
         kfree(pp);
+        pp = np;
     }
+    kfree(pr);
 }
 
 int path_get_drive_number(const char* path){
@@ -28,7 +29,7 @@ bool path_valid_char(char c){
     return true;
 }
 
-int path_parse(const char* path, struct path_root* proot){
+int path_parse(const char* path, const char* current_directory_path, struct path_root* proot){
     proot = kzalloc(sizeof(struct path_root));
     if(proot == NULL)
         return -EMEMORY;
