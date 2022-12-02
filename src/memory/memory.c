@@ -25,13 +25,13 @@ int char_to_digit(char c){
     return (int)(c - 48);
 }
 
-char* itoa(int num){
+char* itoa(int num, char* buf){
     size_t max_len = 12;        //The maximum length in digits of a signed integer + null terminator is 12
     int stack[max_len];
     //Set this to zero in case num == 0
     stack[max_len - 1] = 0; 
     int top = max_len - 1;
-    char *buf = kzalloc(max_len);
+    //char *buf = kzalloc(max_len);
     int b_index = 0;
     buf[0] = '0';
     for(int n = num; n != 0; n = n / 10, --top){
@@ -43,6 +43,7 @@ char* itoa(int num){
     for(;top < max_len;++b_index,++top){
         buf[b_index] = stack[top] + 48;
     }
+    buf[b_index] = '\0';
     return buf;
 }
 

@@ -7,6 +7,7 @@
 #include "fs/pparser.h"
 #include "status.h"
 #include "memory/memory.h"
+#include "limits.h"
 
 #define BLUE 1
 #define BLACK 0
@@ -46,6 +47,11 @@ void print(const char* str){
 	}
 }
 
+void puts(const char* str){
+	print(str);
+	print("\n");
+}
+
 void terminal_initialize(){
 	video_mem = (uint16_t*)(0xB8000);
 	for(int y = 0; y < VGA_HEIGHT; ++y){
@@ -69,8 +75,19 @@ void kernel_main(){
 
 	enable_paging();
 
-	const char* text = "Example text";
-	print(itoa(strlen(text)));
+	//int a = INT_MAX;
+	char buf[13];
+	char buf2[3];
+	char buf3[4];
+
+	puts(itoa(INT_MAX, buf)); 
+	puts(itoa(INT_MIN, buf)); 
+	puts(itoa(27, buf2)); 
+	puts(itoa(-27, buf3)); 
+
+
+	//const char* text = "Example text";
+	//print(itoa(strlen(text)));
 
 	enable_interrupts();
 	print("OK");
