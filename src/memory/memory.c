@@ -99,6 +99,7 @@ int memcmp(const void* str1, const void* str2, size_t n){
     const char* c_str1 = (char*)str1;
     const char* c_str2 = (char*)str2;
     int i = 0;
+    //int u = n - 1;
     for(;i < n && c_str1[i] == c_str2[i];++i);
     return c_str1[i] - c_str2[i];
 }
@@ -122,7 +123,7 @@ void strncpy(void* dest, const void* src, size_t sz){
 int strlen(const char *str){
     int i = 0;
     while(str[i++]);
-    return i;
+    return i - 1;
 }
 
 int strnlen(const char *str, int max){

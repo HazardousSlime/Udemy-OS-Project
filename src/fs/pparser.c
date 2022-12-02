@@ -30,7 +30,7 @@ bool path_valid_char(char c){
 }
 
 int path_parse(const char* path, const char* current_directory_path, struct path_root* proot){
-    proot = kzalloc(sizeof(struct path_root));
+    //proot = kzalloc(sizeof(struct path_root));
     if(proot == NULL)
         return -EMEMORY;
     int drive_no = path_get_drive_number(path);
@@ -73,4 +73,19 @@ int path_parse(const char* path, const char* current_directory_path, struct path
         }
     }
     return PEACHOS_ALL_OK;
+}
+
+void path_traverse(struct path_root* proot, char* buf){
+    itoa(proot->drive_no, buf);
+    buf[1] = ':';
+    buf[2] = '/';
+    struct path_part* pp = proot->first;
+    int i = 3;
+    for(; pp; pp = pp->next){
+        for(int j = 0; pp->part[j] != '\0';++j,++i)
+            buf[i] = pp->part[j];
+
+        buf[i++] = '/';
+    }
+    buf[i] = '\0';
 }
