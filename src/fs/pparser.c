@@ -6,6 +6,16 @@
 #include "memory/memory.h"
 #include "kernel.h"
 
+void path_free(struct path_root* pr){
+    struct path_part* pp = pr->first;
+    kfree(pr);
+    for(; pp; pp=pp->next){
+        struct path_part* np = pp->next;
+        kfree(pp->part);
+        kfree(pp);
+    }
+}
+
 int path_get_drive_number(const char* path){
     if(     is_digit(path[0]) &&
             path[1] == ':' &&
