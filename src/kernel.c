@@ -9,6 +9,7 @@
 #include "memory/memory.h"
 #include "limits.h"
 #include "test/test.h"
+#include "unittests/test_main.h"
 
 #define BLUE 1
 #define BLACK 0
@@ -79,6 +80,8 @@ void kernel_main(){
 	paging_switch(paging_4gb_chunk_get_directory(kernel_chunk));
 
 	enable_paging();
+
+	test_main_run_tests();
 
 	struct path_root* roots[10];
 	bzero(roots, sizeof(struct path_root*) * 10);

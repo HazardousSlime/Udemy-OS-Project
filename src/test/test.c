@@ -13,3 +13,8 @@ void assert_func(bool cond, const char *file, int line, const char* func){
 	print("====END====");
 	while(1);
 }
+
+void test_ok_func(const char* func){
+    print(func);
+    puts(": PASSED");
+}
