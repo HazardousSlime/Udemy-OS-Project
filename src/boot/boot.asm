@@ -36,6 +36,13 @@ step2:						;Disable interrupts
 	jmp CODE_SEG:load32			;Note: The "Code segment" is not that same as CS. It
 	;jmp $					;is a selector which is an offset into the GDT (0x08), not a 
 						;memory address or segment pointer.
+
+
+							;Setting the segment limit to 0xFFFF and granularity to page
+							;Makes all 4 GB of RAM available for use
+							;Base contains the base address of the code/data segments
+							;Refer to osdev.org for details regarding flags/access byte
+
 gdt_start:
 gdt_null:					;Global Descriptor Table
 	dd 0x0					;64 bits null
@@ -44,7 +51,7 @@ gdt_code:					;Offset 0x8 (CS points here)
 	dw 0xffff				;Segment limit first 0-15 bits				
 	dw 0					;Base first 0-15 bits
 	db 0					;Base first 16-23 bits
-	db 0x9a					;Access Byte
+	db 0x9a					;Access Byte	(10011010b)
 	db 11001111b				;High 4 bit flags and low 4 bits flags
 	db 0					;Base 24-31 bits
 
@@ -52,7 +59,7 @@ gdt_data:					;Offset 0x10
 	dw 0xffff				;Segment limit first 0-15 bits				
 	dw 0					;Base first 0-15 bits
 	db 0					;Base first 16-23 bits
-	db 0x92					;Access Byte
+	db 0x92					;Access Byte (10010010b)
 	db 11001111b				;High 4 bit flags and low 4 bits flags
 	db 0					;Base 24-31 bits
 
