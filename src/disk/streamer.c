@@ -4,6 +4,10 @@
 #include "status.h"
 #include "config.h"
 
+void diskstreamer_close(struct disk_stream* stream){
+    kfree(stream);
+}
+
 struct disk_stream* diskstreamer_new(int disk_id){
     struct disk* disk = disk_get(disk_id);
     if(!disk)
