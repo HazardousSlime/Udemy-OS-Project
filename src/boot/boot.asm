@@ -9,11 +9,32 @@ CODE_SEG equ gdt_code - gdt_start
 DATA_SEG equ gdt_data - gdt_start
 KERNEL_START equ 0x0100000
 
-_start:						;Dummy BIOS Parameter block
+;_start:					;Dummy BIOS Parameter block
 	jmp short start
 	nop
 
-times 33 db 0
+;times 33 db 0										;FAT16 Header
+OEMIdentifier				db 'PEACHOS '			;Volume name
+BytesPerSector				dw 0x200 				;Sector size of 512, generally ignored by most kernels
+SectorsPerCluster			db 0x80					;128
+ReservedSectors				dw 200					;Sectors reserved for kernel
+FatCopies					db 0x02					;Two copies of FAT
+RootDirEntries				dw 0x40					;64 Entries
+NumSectors					dw 0x00					;Can be zero
+MediaType					db 0xF8
+SectorsPerFat				dw 0x100				;256
+SectorsPerTrack				dw 0x20					;32
+NumberOfHeads				dw 0x40					;64
+HiddenSectors				dd 0x00
+SectorsBig					dd 0x773594				;???
+
+													;Extended BPB (Dos 4.0)
+DriveNumber					db 0x80
+WinNTBit					db 0x00
+Signature					db 0x29
+VolumeID					dd 0xD105
+VolumeIDString				db 'PEACHOSBOOT'		;11 bytes
+SystemIDString				db 'FAT16   '		
 
 start:
 	jmp 0:step2				;offset relative to origin of code is 0
@@ -24,18 +45,18 @@ step2:						;Disable interrupts
 	mov ds, ax				;Set data segment
 	mov es, ax				;Set extra segment
 	mov ss, ax				;Set Stack bottom
-	mov sp, 0x7c00				;Set stack pointer
-	sti					;Re-enable interrupts
+	mov sp, 0x7c00			;Set stack pointer
+	sti						;Re-enable interrupts
 
 .load_protected:
-	cli					;Disable interrupts
+	cli						;Disable interrupts
 	lgdt[gdt_descriptor]
 	mov eax, cr0
 	or eax, 0x1
 	mov cr0, eax
-	jmp CODE_SEG:load32			;Note: The "Code segment" is not that same as CS. It
+	jmp CODE_SEG:load32		;Note: The "Code segment" is not that same as CS. It
 	;jmp $					;is a selector which is an offset into the GDT (0x08), not a 
-						;memory address or segment pointer.
+							;memory address or segment pointer.
 
 
 							;Setting the segment limit to 0xFFFF and granularity to page
@@ -52,7 +73,7 @@ gdt_code:					;Offset 0x8 (CS points here)
 	dw 0					;Base first 0-15 bits
 	db 0					;Base first 16-23 bits
 	db 0x9a					;Access Byte	(10011010b)
-	db 11001111b				;High 4 bit flags and low 4 bits flags
+	db 11001111b			;High 4 bit flags and low 4 bits flags
 	db 0					;Base 24-31 bits
 
 gdt_data:					;Offset 0x10 
@@ -60,7 +81,7 @@ gdt_data:					;Offset 0x10
 	dw 0					;Base first 0-15 bits
 	db 0					;Base first 16-23 bits
 	db 0x92					;Access Byte (10010010b)
-	db 11001111b				;High 4 bit flags and low 4 bits flags
+	db 11001111b			;High 4 bit flags and low 4 bits flags
 	db 0					;Base 24-31 bits
 
 gdt_end:
@@ -71,16 +92,16 @@ gdt_descriptor:
 [BITS 32]
 load32:
 	mov eax, 1				;Load starting at sector 1
-	mov ecx, 100				;Load 100 sectors
-	mov edi, KERNEL_START			;Place data at 0x0100000
+	mov ecx, 100			;Load 100 sectors
+	mov edi, KERNEL_START	;Place data at 0x0100000
 	call ata_lba_read
 	jmp KERNEL_START
 
 ata_lba_read:
-	mov ebx, eax				;Store LBA (sector 1) temporarily
+	mov ebx, eax			;Store LBA (sector 1) temporarily
 	shr eax, 24				;Send the highest 8 bits of the lba to disk controller
-	or eax, 0xe0				;Selects master drive
-	mov dx, 0x1f6				;Place port number in dx
+	or eax, 0xe0			;Selects master drive
+	mov dx, 0x1f6			;Place port number in dx
 	out dx, al				;Send bits to disk controller
 
 	mov eax, ecx				
@@ -114,15 +135,15 @@ ata_lba_read:
 	test al, 8				;Test to see if a bit is set
 	jz .try_again
 
-	mov ecx, 256				;One sector = 256 words (16-bit numbers)
+	mov ecx, 256			;One sector = 256 words (16-bit numbers)
 	mov dx, 0x1f0				
 	rep insw				;Read 256 16-bit values from the disk and store in [ES:EDI]
 	pop ecx
-	loop .next_sector			;ecx is the 'count' register which decrements automatically
+	loop .next_sector		;ecx is the 'count' register which decrements automatically
 
 	ret
 	
-times 510 - ($- $$) db 0			;Pad Sector with zeroes
+times 510 - ($- $$) db 0	;Pad Sector with zeroes
 dw 0xAA55					;Final word must be 0xAA55
 
 ;===========================================================================
@@ -173,3 +194,5 @@ dw 0xAA55					;Final word must be 0xAA55
 ;	[Debugging]
 ;info registers
 ;layout asm
+;	[Mounting a binary file]
+;sudo mount -t vfat ./os.bin /mnt/d

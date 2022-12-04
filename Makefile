@@ -1,5 +1,5 @@
 UNIT_TESTS = $(patsubst ./src/unittests/%.c, ./build/unittests/%.o, $(wildcard ./src/unittests/*.c))
-
+ONE_MEG = 1048576
 FILES = ./build/kernel.asm.o ./build/kernel.o ./build/idt/idt.asm.o ./build/idt/idt.o ./build/memory/memory.o \
 ./build/io/io.asm.o ./build/memory/heap/heap.o ./build/memory/heap/kheap.o ./build/memory/paging/paging.o \
 ./build/memory/paging/paging.asm.o ./build/disk/disk.o ./build/fs/pparser.o ./build/test/test.o $(UNIT_TESTS) \
@@ -18,7 +18,12 @@ FLAGS= -g -ffreestanding -falign-jumps -falign-functions -falign-labels -falign-
 all: ./bin/boot.bin ./bin/kernel.bin 
 	dd if=./bin/boot.bin > ./bin/os.bin
 	dd if=./bin/kernel.bin >> ./bin/os.bin
-	dd if=/dev/zero bs=512 count=100 >> ./bin/os.bin
+	#dd if=/dev/zero bs=512 count=100 >> ./bin/os.bin
+	#16 megabytes of nulls to use as space for file storage (FAT16)
+	dd if=/dev/zero bs=$(ONE_MEG) count=16 >> ./bin/os.bin
+	sudo mount -t vfat ./bin/os.bin /mnt/d
+	#Copy a file
+	sudo umount /mnt/d
 ./bin/boot.bin: ./src/boot/boot.asm
 	nasm -f bin ./src/boot/boot.asm -o ./bin/boot.bin
 
