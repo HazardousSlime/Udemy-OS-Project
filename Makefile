@@ -23,6 +23,7 @@ all: ./bin/boot.bin ./bin/kernel.bin
 	dd if=/dev/zero bs=$(ONE_MEG) count=16 >> ./bin/os.bin
 	sudo mount -t vfat ./bin/os.bin /mnt/d
 	#Copy a file
+	sudo cp ./hello.txt /mnt/d
 	sudo umount /mnt/d
 ./bin/boot.bin: ./src/boot/boot.asm
 	nasm -f bin ./src/boot/boot.asm -o ./bin/boot.bin
