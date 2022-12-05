@@ -42,5 +42,6 @@ void disk_search_and_init(){
     bzero(&dsk, sizeof(struct disk));
     dsk.sector_size = PEACHOS_SECTOR_SIZE;
     dsk.type = PEACHOS_DISK_TYPE_REAL;
+    dsk.filesystem = fs_resolve(&dsk);
 }
 

@@ -1,11 +1,15 @@
 #ifndef DISK_H
 #define DISK_H
 
+#include "fs/file.h"
+
 typedef unsigned int peachos_disk_type;
 #define PEACHOS_DISK_TYPE_REAL  0                               //A real, physical disk
 struct disk{
     peachos_disk_type type;
     int sector_size;
+
+    struct filesystem* filesystem;
 };
 
 struct disk* disk_get(int index);

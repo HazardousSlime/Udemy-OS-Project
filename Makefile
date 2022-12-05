@@ -3,7 +3,7 @@ ONE_MEG = 1048576
 FILES = ./build/kernel.asm.o ./build/kernel.o ./build/idt/idt.asm.o ./build/idt/idt.o ./build/memory/memory.o \
 ./build/io/io.asm.o ./build/memory/heap/heap.o ./build/memory/heap/kheap.o ./build/memory/paging/paging.o \
 ./build/memory/paging/paging.asm.o ./build/disk/disk.o ./build/fs/pparser.o ./build/test/test.o $(UNIT_TESTS) \
-./build/disk/streamer.o
+./build/disk/streamer.o ./build/fs/file.o
 
 
 INCLUDES= -I ./src
@@ -76,6 +76,9 @@ all: ./bin/boot.bin ./bin/kernel.bin
 
 ./build/disk/streamer.o: ./src/disk/streamer.c
 	$(CC) $(INCLUDES) $(FLAGS) -std=gnu99 -c ./src/disk/streamer.c -o ./build/disk/streamer.o
+
+./build/fs/file.o: ./src/fs/file.c
+	$(CC) $(INCLUDES) $(FLAGS) -std=gnu99 -c ./src/fs/file.c -o ./build/fs/file.o
 
 install: ./bin/os.bin
 	sudo dd if=./bin/os.bin of=/dev/sdb
