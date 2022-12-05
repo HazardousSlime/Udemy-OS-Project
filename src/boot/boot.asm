@@ -9,11 +9,14 @@ CODE_SEG equ gdt_code - gdt_start
 DATA_SEG equ gdt_data - gdt_start
 KERNEL_START equ 0x0100000
 
+global FAT16_header
+
 ;_start:					;Dummy BIOS Parameter block
 	jmp short start
 	nop
 
 ;times 33 db 0										;FAT16 Header
+FAT16_header:
 OEMIdentifier				db 'PEACHOS '			;Volume name
 BytesPerSector				dw 0x200 				;Sector size of 512, generally ignored by most kernels
 SectorsPerCluster			db 0x80					;128

@@ -1,6 +1,8 @@
 #include "fat16.h"
 #include "status.h"
 #include "memory/memory.h"
+#include "disk/disk.h"
+#include "disk/streamer.h"
 #include <stddef.h>
 #include <stdint.h>
 
@@ -23,7 +25,7 @@ typedef unsigned int FAT_ITEM_TYPE;
 #define FAT_FILE_DEVICE 0x40
 #define FAT_FILE_RESERVED 0x80
 
-struct fat_header_extender{
+struct fat_header_extended{
     uint8_t driver_number;
     uint8_t win_nt_bit;
     uint8_t signature;
@@ -48,6 +50,65 @@ struct fat_header{
     uint32_t hidden_sectors;
     uint32_t sectors_big;
 }__attribute__((packed));
+
+struct fat_h{
+    struct fat_header primary_header;
+    union fat_h_e{
+        struct fat_header_extended extended_header;
+    } shared;
+};
+
+struct fat_directory_item{
+    uint8_t filename;
+    uint8_t ext[3];
+    uint8_t attribute;
+    uint8_t reserved;
+    uint8_t creation_time_tenths_of_a_sec;
+    uint16_t creation_time;
+    uint16_t creation_date;
+    uint16_t last_access;
+    uint16_t high_16_bits_first_cluster;
+    uint16_t last_mod_time;
+    uint16_t last_mod_date;
+    uint16_t low_16_bits_first_cluster;
+    uint32_t filesize;
+}__attribute__((packed));
+
+struct fat_directory{
+    //The first item in the directory
+    struct fat_directory_item* item;
+    //Total items in directory
+    int total;
+    //Staring sector of directory
+    int sector_pos;
+    int end_sector;
+};
+
+struct fat_item{
+    union{
+        struct fat_directory_item* item;
+        struct fat_directory* directory;
+    };
+    //Internal use only
+    FAT_ITEM_TYPE type; 
+};
+
+struct fat_item_descriptor{
+    struct fat_item* item;
+    uint32_t pos;
+};
+
+struct fat_private{
+    struct fat_h header;
+    struct fat_directory root_directory;
+
+    //Streams data clusters
+    struct disk_stream* cluster_read_stream;
+    //Used to stream the file allocation table
+    struct disk_stream* fat_read_stream;
+    //Used to stream the directory
+    struct disk_stream* directory_stream;
+};
 
 int fat16_resolve(struct disk* disk);
 void* fat_open(struct disk* disk, struct path_part* path, FILE_MODE mode);
