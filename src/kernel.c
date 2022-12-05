@@ -10,6 +10,7 @@
 #include "limits.h"
 #include "test/test.h"
 #include "unittests/test_main.h"
+#include "fs/file.h"
 
 #define BLUE 1
 #define BLACK 0
@@ -69,10 +70,14 @@ void terminal_initialize(){
 
 void kernel_main(){
 	terminal_initialize();
-	disk_search_and_init();
 	idt_init();
 
 	kheap_init();
+
+	fs_init();
+
+	disk_search_and_init();
+
 
 	kernel_chunk = NULL;
 	uint8_t flags = PAGING_IS_WRITABLE | PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL;
