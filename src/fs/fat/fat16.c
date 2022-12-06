@@ -213,6 +213,10 @@ int fat16_resolve(struct disk* disk){
     int res = PEACHOS_ALL_OK;
     struct fat_private* fat_private = kzalloc(sizeof(struct fat_private));
     fat16_init_private(disk, fat_private);
+
+    disk->fs_private = fat_private;
+    disk->filesystem = &fat16_fs; 
+
     struct disk_stream* stream = diskstreamer_new(disk->id);
     if(!stream){
         res = -EMEMORY;
@@ -232,8 +236,7 @@ int fat16_resolve(struct disk* disk){
         res = -EIO;
         goto out;
     }
-    disk->fs_private = fat_private;
-    disk->filesystem = &fat16_fs;  
+ 
 out:
     if(stream)
         diskstreamer_close(stream);
