@@ -8,8 +8,9 @@ typedef unsigned int peachos_disk_type;
 struct disk{
     peachos_disk_type type;
     int sector_size;
-
+    int id;
     struct filesystem* filesystem;
+    void* fs_private;
 };
 
 struct disk* disk_get(int index);

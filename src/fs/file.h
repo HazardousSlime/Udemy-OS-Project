@@ -32,7 +32,7 @@ struct file_descriptor{
     int index;
     struct filesystem* filesystem;
 
-    //void* private;
+    void* private;
 
     struct disk* disk;
 };

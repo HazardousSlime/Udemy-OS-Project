@@ -1,6 +1,7 @@
 #include "fat16.h"
 #include "status.h"
 #include "memory/memory.h"
+#include "memory/heap/kheap.h"
 #include "disk/disk.h"
 #include "disk/streamer.h"
 #include <stddef.h>
@@ -124,9 +125,61 @@ struct filesystem* fat16_init(){
     return &fat16_fs;
 }
 
+static void fat16_init_private(struct disk* disk, struct fat_private* private){
+    bzero(private, sizeof(struct fat_private));
+    private->cluster_read_stream = diskstreamer_new(disk->id);
+    private->directory_stream = diskstreamer_new(disk->id);
+    private->fat_read_stream = diskstreamer_new(disk->id);
+}
+
+int fat16_get_root_directory(   
+                                struct disk* disk, 
+                                struct fat_private* fat_private, 
+                                struct fat_directory* fat_directory
+                            ){
+    int res = PEACHOS_ALL_OK;
+    struct fat_header* primary_header = &fat_private->header.primary_header;
+    int rs = primary_header->reserved_sectors;
+    //The root directory starts after the 200 reserved sectors and the two sectors for the
+    //file allocation tables.
+    int root_dir_sector_pos = (primary_header->fat_copies * primary_header->sectors_per_fat) + rs;
+    int root_dir_entries = fat_private->header.primary_header.root_dir_entries;
+    int root_dir_size = (root_dir_entries * sizeof(struct fat_directory_item));
+    int total_sectors = root_dir_size / disk->sector_size + 1;
+
+    //int total_items = fat16_get_total_items_for_directory(fat_private, root_dir_sector_pos);
+
+    if(root_dir_sector_pos && total_sectors);
+
+    return res;
+}
+
 int fat16_resolve(struct disk* disk){
-    //Returning 0 signifies that the filesystem has been resolved
-    return 0;
+    int res = PEACHOS_ALL_OK;
+    struct fat_private* fat_private = kzalloc(sizeof(struct fat_private));
+    fat16_init_private(disk, fat_private);
+    struct disk_stream* stream = diskstreamer_new(disk->id);
+    if(!stream){
+        res = -EMEMORY;
+        goto out;
+    }
+    //Read the first sector for a filesystem header
+    if(diskstreamer_read(stream, &fat_private->header, sizeof(fat_private->header))){
+        res = -EIO;
+        goto out;
+    }
+    if(fat_private->header.shared.extended_header.signature != 0x29){
+        res = -EFSNOTUS;
+        goto out;
+    }
+    if(fat16_get_root_directory(disk, fat_private, &fat_private->root_directory))
+    {
+        res = -EIO;
+        goto out;
+    }  
+out:
+
+    return res;
 }
 
 void* fat_open(struct disk* disk, struct path_part* path, FILE_MODE mode){
