@@ -6,6 +6,7 @@
 #include "memory/heap/kheap.h"
 #include "status.h"
 #include "fs/fat/fat16.h"
+#include "kernel.h"
 
 static struct filesystem* filesystems[PEACHOS_MAX_FILESYSTEMS];
 static struct file_descriptor* file_descriptors[PEACHOS_MAX_FILE_DESCRIPTORS];
@@ -73,8 +74,71 @@ struct filesystem* fs_resolve(struct disk* disk){
     return fs;
 }
 
-int fopen(const char* filename, const char* mode){
-    return -EIO;
+FILE_MODE file_get_mode_by_string(const char* str){
+    FILE_MODE mode = FILE_MODE_INVALID;
+    char c = str[0];
+    switch (c){
+        case 'r':
+            mode = FILE_MODE_READ;
+            break;
+        case 'w':
+            mode = FILE_MODE_WRITE;
+            break;
+        case 'a':
+            mode = FILE_MODE_APPEND;
+            break;
+        default:
+            break;
+    }
+    return mode;
+}
+
+int fopen(const char* filename, const char* mode_str){
+    int res = PEACHOS_ALL_OK;
+    struct path_root root_path;
+    res = path_parse(filename, "", &root_path);
+    if(res){
+        goto out;
+    }
+    //Must be a file, not root directory
+    if(!root_path.first){
+        res = -EINVARG;
+        goto out;
+    }
+    struct disk* disk = disk_get(root_path.drive_no);
+    if(!disk){
+        res = -EIO;
+        goto out;
+    }
+    if(!disk->filesystem){
+        res = -EIO;
+        goto out;
+    }
+
+    FILE_MODE mode = file_get_mode_by_string(mode_str);
+    if(mode == FILE_MODE_INVALID){
+        res = -EINVARG;
+        goto out;
+    }
+
+    void* descriptor_private_data = disk->filesystem->open(disk, root_path.first, mode);
+    if(ISERR(descriptor_private_data)){
+        res = ERROR_I(descriptor_private_data);
+        goto out;
+    }
+
+    struct file_descriptor* desc = NULL;
+    res = file_new_descriptor(&desc);
+    if(res < 0){
+        goto out;
+    }
+    desc->filesystem = disk->filesystem;
+    desc->private = descriptor_private_data;
+    desc->disk = disk;
+    res = desc->index;
+out:
+    res = (res < 0) ? 0 : res;
+    return res;
 }
 
 

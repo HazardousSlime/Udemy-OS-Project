@@ -30,6 +30,19 @@ bool is_digit(char c){
     return c >= 48 && c <= 57;
 }
 
+char tolower(char c){
+    return (c >= 65 && c <= 90) ? c + 32 : c;
+}
+
+int istrncmp(const char* str1, const char* str2, int n){
+    const char* c_str1 = (char*)str1;
+    const char* c_str2 = (char*)str2;
+    int i = 0;
+    //int u = n - 1;
+    for(;i < n && tolower(c_str1[i]) == tolower(c_str2[i]);++i);
+    return c_str1[i] - c_str2[i];
+}
+
 char* itoa(int num, char* buf){
     size_t max_len = 12;        //The maximum length in digits of a signed integer + null terminator is 12
     int stack[max_len];
@@ -129,5 +142,12 @@ int strlen(const char *str){
 int strnlen(const char *str, int max){
     int i = 0;
     while(i < max && str[i++]);
+    return i;
+}
+
+int strnlen_terminator(const char* str, int max, char terminator){
+    int i = 0;
+    while(i < max && str[i] && str[i] != terminator)
+        ++i;
     return i;
 }

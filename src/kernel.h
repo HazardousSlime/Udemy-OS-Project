@@ -11,4 +11,7 @@ void print(const char* str);
 void puts(const char* str);
 //void problem_escape();
 
+#define ERROR(value) (void*) (value)
+#define ERROR_I(value) (int) (value)
+#define ISERR(value) ((int)value < 0)
 #endif //KERNEL_H

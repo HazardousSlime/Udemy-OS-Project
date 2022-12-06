@@ -38,7 +38,7 @@ int diskstreamer_read(struct disk_stream* stream, void* out, int total){
         //int sectors = total / PEACHOS_HEAP_BLOCK_SIZE;
         char buf[PEACHOS_SECTOR_SIZE];
         res = disk_read_block(stream->disk, sector, 1, buf);
-        if(res)
+        if(res < 0)
             goto out;
         int total_to_read = t > PEACHOS_SECTOR_SIZE ? PEACHOS_SECTOR_SIZE : t;
         for(int i = 0; i < total_to_read; ++i){
