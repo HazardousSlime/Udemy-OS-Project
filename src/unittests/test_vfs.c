@@ -32,6 +32,8 @@ void test_fseek(){
     assert(fseek(fd, 1, SEEK_SET) == PEACHOS_ALL_OK);
     assert(fseek(fd, 3, SEEK_CUR) == PEACHOS_ALL_OK);
     assert(fseek(fd, 2, SEEK_CUR) == -EIO);
-
+    assert(fseek(fd, 2, SEEK_SET) == PEACHOS_ALL_OK);
+    assert(fread(buf, 1, 3, fd) == 3);
+    assert(memcmp("llo", buf, 3) == 0);
     TEST_OK;
 }

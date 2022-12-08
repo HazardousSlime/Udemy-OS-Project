@@ -174,4 +174,23 @@ out:
     return res;
 }
 
+int fstat(int fd, struct file_stat* fstat){
+    int res = 0;
+    struct file_descriptor* desc = file_get_descriptor(fd);
+    if(!desc){
+        res = -EIO;
+        goto out;
+    }
+    fstat = kzalloc(sizeof(struct file_stat));
+    if(!fstat){
+        res = -EMEMORY;
+        goto out;
+    }
+    res = desc->filesystem->stat(desc->disk, desc->private, fstat);
+out:
+    if(res < 0)
+        kfree(fstat);
+    return res;
+}
+
 
