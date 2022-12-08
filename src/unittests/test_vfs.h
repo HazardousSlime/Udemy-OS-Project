@@ -3,4 +3,5 @@
 void test_fopen();
 void test_fread();
 void test_fseek();
+void test_fstat();
 #endif //TEST_VFS_H

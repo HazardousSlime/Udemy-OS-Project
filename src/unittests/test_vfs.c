@@ -37,3 +37,12 @@ void test_fseek(){
     assert(memcmp("llo", buf, 3) == 0);
     TEST_OK;
 }
+
+void test_fstat(){
+    struct file_stat stat;
+    assert(fstat(fd, &stat) == PEACHOS_ALL_OK);
+    assert(stat.filesize == 6);
+    assert(stat.flags == 0);
+    assert(fstat(7, &stat) == -EIO);
+    TEST_OK;
+}
