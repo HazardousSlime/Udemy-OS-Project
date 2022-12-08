@@ -10,4 +10,5 @@ void test_main_run_tests(){
     test_streamer();
     test_fopen();
     test_fread();
+    test_fseek();
 }

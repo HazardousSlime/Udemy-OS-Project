@@ -117,7 +117,7 @@ struct fat_private{
 int fat16_resolve(struct disk* disk);
 void* fat_open(struct disk* disk, struct path_part* path, FILE_MODE mode);
 int fat16_read(struct disk* disk, void* descriptor, uint32_t size, uint32_t nmemb, char* out_ptr);
-int fat16_seek(void* private, int offset, FILE_SEEK_MODE whence);
+int fat16_seek(void* descriptor, int offset, FILE_SEEK_MODE whence);
 struct filesystem fat16_fs = {
     .resolve = fat16_resolve,
     .open = fat_open,
@@ -563,9 +563,40 @@ out:
     return res;
 }
 
-int fat16_seek(void* private, int offset, FILE_SEEK_MODE whence){
+int fat16_seek(void* descriptor, int offset, FILE_SEEK_MODE whence){
     //STUB
     int res = 0;
-
+    struct fat_file_descriptor* fat_desc = descriptor;
+    assert(fat_desc);
+    struct fat_item* desc_item = fat_desc->item;
+    assert(desc_item);
+    struct fat_directory_item* item = desc_item->item;
+    assert(item);
+    if(desc_item->type != FAT_ITEM_TYPE_FILE){
+        res = -EINVARG;
+        goto out;
+    }
+    uint32_t size = item->filesize;
+    int cur_pos = fat_desc->pos;
+    switch(whence){
+        case SEEK_CUR:
+            offset  += cur_pos;
+            break;
+        case SEEK_END:
+            //offset = size - 1 - offset;
+            res = -EUNIMP;
+            goto out;
+        case SEEK_SET:
+            break;
+        default:
+            //this should never happen, panic
+            assert(0);
+    }
+    if(offset < 0 || offset >= size){
+        res = -EIO;
+        goto out;
+    }
+    fat_desc->pos = offset;
+out:
     return res;
 }

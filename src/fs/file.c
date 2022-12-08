@@ -165,6 +165,10 @@ int fseek(int fd, int offset, FILE_SEEK_MODE whence){
         res = -EIO;
         goto out;
     }
+    if(whence < SEEK_SET || whence > SEEK_END){
+        res = -EINVARG;
+        goto out;
+    }
     res = desc->filesystem->seek(desc->private, offset, whence);
 out: 
     return res;
