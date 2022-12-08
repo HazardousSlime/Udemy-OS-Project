@@ -1,6 +1,6 @@
 #include "unittests/test_parser.h"
 #include "unittests/test_streamer.h"
-#include "unittests/test_fopen.h"
+#include "unittests/test_vfs.h"
 
 void test_main_run_tests(){
     //Parser
