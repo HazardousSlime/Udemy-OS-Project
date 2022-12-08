@@ -9,4 +9,5 @@ void test_main_run_tests(){
     //Streamer
     test_streamer();
     test_fopen();
+    test_fread();
 }
