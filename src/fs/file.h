@@ -23,11 +23,13 @@ struct disk; //This is required for some reason
 typedef void* (*FS_OPEN_FUNCTION)(struct disk* disk, struct path_part* path, FILE_MODE mode);
 typedef int (*FS_READ_FUNCTION)(struct disk* disk, void* private, uint32_t size, uint32_t nmemb, char* out);
 typedef int (*FS_RESOLVE_FUNCTION)(struct disk* disk);
+typedef int (*FS_SEEK_FUNCTION)(void* private, int offset, FILE_SEEK_MODE whence);
 
 struct filesystem{
     FS_RESOLVE_FUNCTION resolve;
     FS_OPEN_FUNCTION open;
     FS_READ_FUNCTION read;
+    FS_SEEK_FUNCTION seek;
     char name[20];
 };
 

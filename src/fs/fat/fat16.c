@@ -117,10 +117,12 @@ struct fat_private{
 int fat16_resolve(struct disk* disk);
 void* fat_open(struct disk* disk, struct path_part* path, FILE_MODE mode);
 int fat16_read(struct disk* disk, void* descriptor, uint32_t size, uint32_t nmemb, char* out_ptr);
+int fat16_seek(void* private, int offset, FILE_SEEK_MODE whence);
 struct filesystem fat16_fs = {
     .resolve = fat16_resolve,
     .open = fat_open,
-    .read = fat16_read
+    .read = fat16_read,
+    .seek = fat16_seek
 };
 
 struct filesystem* fat16_init(){
@@ -558,5 +560,12 @@ int fat16_read(struct disk* disk, void* descriptor, uint32_t size, uint32_t nmem
     }
     res = nmemb;
 out:
+    return res;
+}
+
+int fat16_seek(void* private, int offset, FILE_SEEK_MODE whence){
+    //STUB
+    int res = 0;
+
     return res;
 }

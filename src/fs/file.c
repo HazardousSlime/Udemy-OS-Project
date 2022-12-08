@@ -150,11 +150,23 @@ int fread(void* ptr, uint32_t size, uint32_t nmemb, int fd){
     }
     struct file_descriptor* desc = file_get_descriptor(fd);
     if(!desc){
-        res = -EINVARG;
+        res = -EIO;
         goto out;
     }
     res = desc->filesystem->read(desc->disk, desc->private, size, nmemb, (char*)ptr);
 out:
+    return res;
+}
+
+int fseek(int fd, int offset, FILE_SEEK_MODE whence){
+    int res = 0;
+    struct file_descriptor* desc = file_get_descriptor(fd);
+    if(!desc){
+        res = -EIO;
+        goto out;
+    }
+    res = desc->filesystem->seek(desc->private, offset, whence);
+out: 
     return res;
 }
 
