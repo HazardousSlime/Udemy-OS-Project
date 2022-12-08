@@ -149,7 +149,7 @@ int fread(void* ptr, uint32_t size, uint32_t nmemb, int fd){
         goto out;
     }
     struct file_descriptor* desc = file_get_descriptor(fd);
-    if(!desc){
+    if(!desc || !(desc->private)){
         res = -EIO;
         goto out;
     }
@@ -161,7 +161,7 @@ out:
 int fseek(int fd, int offset, FILE_SEEK_MODE whence){
     int res = 0;
     struct file_descriptor* desc = file_get_descriptor(fd);
-    if(!desc){
+    if(!desc || !(desc->private)){
         res = -EIO;
         goto out;
     }
@@ -177,7 +177,7 @@ out:
 int fstat(int fd, struct file_stat* stat){
     int res = 0;
     struct file_descriptor* desc = file_get_descriptor(fd);
-    if(!desc){
+    if(!desc || !(desc->private)){
         res = -EIO;
         goto out;
     }
@@ -193,4 +193,15 @@ out:
     return res;
 }
 
-
+int fclose(int fd){
+    int res = 0;
+    struct file_descriptor* desc = file_get_descriptor(fd);
+    if(!(desc) || !(desc->private)){
+        res = -EIO;
+        goto out;
+    }
+    res = desc->filesystem->close(desc->private);
+    desc->private = NULL;
+out:
+    return res;
+}

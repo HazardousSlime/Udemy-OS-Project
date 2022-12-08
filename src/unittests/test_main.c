@@ -12,4 +12,5 @@ void test_main_run_tests(){
     test_fread();
     test_fseek();
     test_fstat();
+    test_fclose();
 }

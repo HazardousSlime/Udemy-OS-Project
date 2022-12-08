@@ -46,3 +46,10 @@ void test_fstat(){
     assert(fstat(7, &stat) == -EIO);
     TEST_OK;
 }
+
+void test_fclose(){
+    assert(fclose(fd) == PEACHOS_ALL_OK);
+    assert(fclose(fd) == -EIO);
+    assert(fclose(7) == -EIO);
+    TEST_OK;
+}
