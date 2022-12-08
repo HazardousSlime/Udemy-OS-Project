@@ -1,3 +1,4 @@
+.vscode/*
 bin/**
 !bin/**/
 build/**
@@ -12,3 +13,4 @@ build/**
 #!build/memory/.gitkeep
 #!build/memory/heap/.gitkeep
 #!build/memory/paging/.gitkeep
+
