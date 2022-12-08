@@ -21,9 +21,13 @@ all: ./bin/boot.bin ./bin/kernel.bin
 	#dd if=/dev/zero bs=512 count=100 >> ./bin/os.bin
 	#16 megabytes of nulls to use as space for file storage (FAT16)
 	dd if=/dev/zero bs=$(ONE_MEG) count=16 >> ./bin/os.bin
-	sudo mount -t vfat ./bin/os.bin /mnt/d
+	#sudo mount -t msdos -o loop ./bin/os.bin /mnt/d
+	sudo mount -o loop -t vfat -o fat=16 ./bin/os.bin /mnt/d
+	#sudo mount -t vfat ./bin/os.bin /mnt/d
 	#Copy a file
-	sudo cp ./hello.txt /mnt/d
+	#sudo cp ./hello.txt /mnt/d
+	cp hello.txt h
+	sudo cp h /mnt/d
 	sudo umount /mnt/d
 ./bin/boot.bin: ./src/boot/boot.asm
 	nasm -f bin ./src/boot/boot.asm -o ./bin/boot.bin

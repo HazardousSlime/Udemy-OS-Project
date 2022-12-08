@@ -197,7 +197,7 @@ int fat16_get_root_directory(
 
     struct disk_stream* stream = fat_private->directory_stream;
     //Point directory stream to the start of the root directory
-    if(diskstreamer_seek(stream, fat16_sector_to_absolute(disk, root_dir_sector_pos) < 0)){
+    if((diskstreamer_seek(stream, fat16_sector_to_absolute(disk, root_dir_sector_pos)) < 0)){
         res = -EIO;
         goto out;
     }
@@ -227,7 +227,7 @@ int fat16_resolve(struct disk* disk){
         goto out;
     }
     //Read the first sector for a filesystem header
-    if(diskstreamer_read(stream, &fat_private->header, sizeof(fat_private->header) < 0)){
+    if(diskstreamer_read(stream, &fat_private->header, sizeof(fat_private->header)) < 0){
         res = -EIO;
         goto out;
     }

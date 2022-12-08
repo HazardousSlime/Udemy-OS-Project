@@ -110,6 +110,7 @@ int fopen(const char* filename, const char* mode_str){
         res = -EIO;
         goto out;
     }
+
     if(!disk->filesystem){
         res = -EIO;
         goto out;

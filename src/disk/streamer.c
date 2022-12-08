@@ -28,10 +28,9 @@ int diskstreamer_read(struct disk_stream* stream, void* out, int total){
         return PEACHOS_ALL_OK;
     if(total < 0)
         return -EINVARG;
-    int t = total + PEACHOS_SECTOR_SIZE;
+    int t = total;
     int res = PEACHOS_ALL_OK;
     do{
-        t = t - PEACHOS_SECTOR_SIZE;
 
         int sector = stream->pos / PEACHOS_SECTOR_SIZE;
         int offset = stream->pos % PEACHOS_SECTOR_SIZE;
@@ -45,6 +44,7 @@ int diskstreamer_read(struct disk_stream* stream, void* out, int total){
             *(char*)out++ = buf[offset+i];
         }
         stream->pos += total_to_read;
+        t = t - PEACHOS_SECTOR_SIZE;
     }while(t > PEACHOS_SECTOR_SIZE);
 out:
     return res;

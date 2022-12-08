@@ -39,8 +39,13 @@ int istrncmp(const char* str1, const char* str2, int n){
     const char* c_str2 = (char*)str2;
     int i = 0;
     //int u = n - 1;
-    for(;i < n && tolower(c_str1[i]) == tolower(c_str2[i]);++i);
-    return c_str1[i] - c_str2[i];
+    char a;
+    char b;
+    for(;i < n && (a = tolower(c_str1[i])) ==  ( b = tolower(c_str2[i]));++i){
+        if(a == 0 || b == 0)
+            break;
+    }
+    return tolower(c_str1[i]) - tolower(c_str2[i]);
 }
 
 char* itoa(int num, char* buf){

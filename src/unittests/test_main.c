@@ -1,5 +1,6 @@
 #include "unittests/test_parser.h"
 #include "unittests/test_streamer.h"
+#include "unittests/test_fopen.h"
 
 void test_main_run_tests(){
     //Parser
@@ -7,4 +8,5 @@ void test_main_run_tests(){
     test_path_traverse();
     //Streamer
     test_streamer();
+    test_fopen();
 }
