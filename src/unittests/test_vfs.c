@@ -51,5 +51,13 @@ void test_fclose(){
     assert(fclose(fd) == PEACHOS_ALL_OK);
     assert(fclose(fd) == -EIO);
     assert(fclose(7) == -EIO);
+    //Make sure the file descriptor becomes usable again
+    assert(fopen("0:/h", "r") == 1);
+    assert(fopen("0:/h", "r") == 2);
+    assert(fopen("0:/h", "r") == 3);
+    assert(fclose(2) == PEACHOS_ALL_OK);
+    assert(fopen("0:/h", "r") == 2);
+    assert(fclose(1) == PEACHOS_ALL_OK);
+    assert(fopen("0:/h", "r") == 1);
     TEST_OK;
 }

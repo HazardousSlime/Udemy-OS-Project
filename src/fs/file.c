@@ -137,8 +137,10 @@ int fopen(const char* filename, const char* mode_str){
     desc->private = descriptor_private_data;
     desc->disk = disk;
     res = desc->index;
+
 out:
-    res = (res < 0) ? 0 : res;
+    //res = (res < 0) ? 0 : res;
+    path_free(&root_path);
     return res;
 }
 
@@ -149,7 +151,7 @@ int fread(void* ptr, uint32_t size, uint32_t nmemb, int fd){
         goto out;
     }
     struct file_descriptor* desc = file_get_descriptor(fd);
-    if(!desc || !(desc->private)){
+    if(!desc){
         res = -EIO;
         goto out;
     }
@@ -161,7 +163,7 @@ out:
 int fseek(int fd, int offset, FILE_SEEK_MODE whence){
     int res = 0;
     struct file_descriptor* desc = file_get_descriptor(fd);
-    if(!desc || !(desc->private)){
+    if(!desc){
         res = -EIO;
         goto out;
     }
@@ -177,7 +179,7 @@ out:
 int fstat(int fd, struct file_stat* stat){
     int res = 0;
     struct file_descriptor* desc = file_get_descriptor(fd);
-    if(!desc || !(desc->private)){
+    if(!desc){
         res = -EIO;
         goto out;
     }
@@ -196,12 +198,14 @@ out:
 int fclose(int fd){
     int res = 0;
     struct file_descriptor* desc = file_get_descriptor(fd);
-    if(!(desc) || !(desc->private)){
+    if(!(desc)){
         res = -EIO;
         goto out;
     }
     res = desc->filesystem->close(desc->private);
-    desc->private = NULL;
+    kfree(desc->private);
+    kfree(desc);
+    file_descriptors[fd-1] = NULL;
 out:
     return res;
 }
